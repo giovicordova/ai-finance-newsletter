@@ -122,12 +122,19 @@ echo "── Word Count ──────────────────�
 
 total_words=$(wc -w < "$EDITION" | tr -d ' ')
 
-# Range: 500-1200 (accommodates thin days and Friday extended)
+# Range: 500-1200 for daily, 900-1800 for Friday extended
 r=1
-if [ "$total_words" -ge 500 ] && [ "$total_words" -le 1200 ]; then
-  r=0
+if [ "$IS_FRIDAY" -eq 1 ]; then
+  if [ "$total_words" -ge 900 ] && [ "$total_words" -le 1800 ]; then
+    r=0
+  fi
+  check "Total word count in 900-1800 range for Friday (actual: $total_words)" $r
+else
+  if [ "$total_words" -ge 500 ] && [ "$total_words" -le 1200 ]; then
+    r=0
+  fi
+  check "Total word count in 500-1200 range (actual: $total_words)" $r
 fi
-check "Total word count in 500-1200 range (actual: $total_words)" $r
 
 echo ""
 
