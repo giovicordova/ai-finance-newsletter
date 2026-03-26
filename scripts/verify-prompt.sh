@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # verify-prompt.sh — structural verification of prompt.md against requirements and decisions
 
-PROMPT="prompt.md"
+PROMPT="${PROMPT_FILE:-.claude/skills/ai-finance-briefing/SKILL.md}"
 PASS=0
 FAIL=0
 TOTAL=0
