@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
-# review-edition.sh — structural quality review of a generated edition file
-# Grades against R001-R011 quality criteria. Exit code = number of failures.
+# review-edition.sh — structural quality review of a generated edition file.
+# Enforces the 1-minute read contract: 250-word daily cap, 500-word weekly cap
+# (body only — link text and URLs are excluded from the count).
 
-# --- Usage ---
 if [ "${1:-}" = "--help" ] || [ "${1:-}" = "-h" ] || [ $# -eq 0 ]; then
   echo "Usage: review-edition.sh <path-to-edition.md>"
   echo ""
-  echo "Structurally grades a generated edition file against quality criteria."
+  echo "Checks the edition meets the 1-minute read spec."
   echo "Exit code = number of failures (0 = all checks pass)."
   exit 0
 fi
@@ -18,28 +18,33 @@ if [ ! -f "$EDITION" ]; then
   exit 99
 fi
 
-PASS=0
-FAIL=0
-TOTAL=0
+PASS=0; FAIL=0; TOTAL=0
 
 check() {
-  local label="$1"
-  local result="$2"  # 0 = pass, non-zero = fail
+  local label="$1"; local result="$2"
   TOTAL=$((TOTAL + 1))
   if [ "$result" -eq 0 ]; then
-    PASS=$((PASS + 1))
-    printf "  ✅  %s\n" "$label"
+    PASS=$((PASS + 1)); printf "  ✅  %s\n" "$label"
   else
-    FAIL=$((FAIL + 1))
-    printf "  ❌  %s\n" "$label"
+    FAIL=$((FAIL + 1)); printf "  ❌  %s\n" "$label"
   fi
 }
 
-# Helper: returns 0 if pattern found in edition, 1 if not
-has() { grep -qi "$1" "$EDITION" >/dev/null 2>&1; }
-has_exact() { grep -q "$1" "$EDITION" >/dev/null 2>&1; }
+has()       { grep -qi "$1" "$EDITION" >/dev/null 2>&1; }
 
-# Detect if this is a Friday edition (has Weekly Intelligence section)
+# Body-word-counter: strip markdown links entirely (both label and URL), drop
+# the title line, date line, section dividers, and code fences. Count what's left.
+body_words() {
+  local scope_file="${1:-$EDITION}"
+  sed -E \
+    -e 's/\[[^]]*\]\([^)]*\)//g'   `# remove [label](url) entirely` \
+    -e '/^#[[:space:]]/d'           `# drop H1 title` \
+    -e '/^\*\*[0-9]+ [A-Za-z]+ [0-9]{4}\*\*$/d' `# drop date line` \
+    -e '/^[[:space:]]*-{3,}[[:space:]]*$/d' \
+    -e '/^```/d' \
+    "$scope_file" | wc -w | tr -d ' '
+}
+
 IS_FRIDAY=0
 has "Weekly Intelligence" && IS_FRIDAY=1
 
@@ -51,192 +56,115 @@ fi
 echo "═══════════════════════════════════════"
 echo ""
 
-# ─────────────────────────────────────────
-# 1. Section Presence
-# ─────────────────────────────────────────
+# ── Sections ──────────────────────────────
 echo "── Section Presence ────────────────────"
 
-# Five Things — or Three/Four Things for thin days
-r=1
-if has "FIVE THINGS" || has "FOUR THINGS" || has "THREE THINGS"; then
-  r=0
-fi
-check "Section: FIVE/FOUR/THREE THINGS present" $r
+r=1; has "^## Today" && r=0
+check "Section: Today (stories section) present" $r
 
-has "DEEP DIVE";          check "Section: DEEP DIVE present" $?
-has "WHAT TO WATCH";      check "Section: WHAT TO WATCH present" $?
+has "Contrarian";         check "Section: One Contrarian Thought present" $?
 
-# Trajectory or bootstrap note
-r=1
-if has "TRAJECTORY" || has "bootstrap" || has "not enough prior editions"; then
-  r=0
-fi
-check "Section: TRAJECTORY or bootstrap note" $r
-
-has "CONTRARIAN";         check "Section: CONTRARIAN THOUGHT present" $?
-
-# Friday-only: Weekly Intelligence
 if [ "$IS_FRIDAY" -eq 1 ]; then
   has "Weekly Intelligence"; check "Section: Weekly Intelligence (Friday)" $?
 fi
 
-echo ""
-
-# ─────────────────────────────────────────
-# 2. Format Compliance
-# ─────────────────────────────────────────
-echo "── Format Compliance ─────────────────"
-
-# Bold lead-ins: **text** pattern in the Five Things section
-# Extract lines between THINGS and DEEP DIVE, count bold lead-ins
-things_section=$(sed -n '/THINGS/,/DEEP DIVE/p' "$EDITION" 2>/dev/null || true)
-bold_count=$(echo "$things_section" | grep -c '\*\*[^*]\+\*\*' 2>/dev/null || true)
-r=1
-if [ "${bold_count:-0}" -ge 2 ]; then
-  r=0
-fi
-check "Bold lead-ins in Five Things (found $bold_count, need ≥2)" $r
-
-# URL format: → https://
-url_count=$(grep -c '→.*https\?://' "$EDITION" 2>/dev/null || true)
-r=1
-if [ "${url_count:-0}" -ge 1 ]; then
-  r=0
-fi
-check "URLs present with → prefix (found $url_count, need ≥1)" $r
-
-# Key numbers in Five Things items: at least some digits in the section
-digit_lines=$(echo "$things_section" | grep -c '[0-9]' 2>/dev/null || true)
-r=1
-if [ "${digit_lines:-0}" -ge 2 ]; then
-  r=0
-fi
-check "Key numbers in Five Things (lines with digits: $digit_lines, need ≥2)" $r
+# Removed-section guard: these should NOT appear in the new format.
+r=0; (has "## Deep Dive" || has "## What to Watch" || has "^## Trajectory") && r=1
+check "No removed sections (Deep Dive / What to Watch / Trajectory)" $r
 
 echo ""
 
-# ─────────────────────────────────────────
-# 3. Word Count
-# ─────────────────────────────────────────
-echo "── Word Count ────────────────────────"
+# ── Format ────────────────────────────────
+echo "── Format Compliance ──────────────────"
 
-total_words=$(wc -w < "$EDITION" | tr -d ' ')
+stories_section=$(sed -n '/^## Today/,/^## /p' "$EDITION" 2>/dev/null | sed '$d' || true)
+bold_count=$(printf "%s\n" "$stories_section" | grep -c '\*\*[^*]\+\*\*' 2>/dev/null || true)
+r=1; [ "${bold_count:-0}" -ge 2 ] && r=0
+check "Bold headlines in Today section (found $bold_count, need ≥2)" $r
 
-# Range: 500-1200 for daily, 900-1800 for Friday extended
-r=1
+url_count=$(grep -c 'https\?://' "$EDITION" 2>/dev/null || echo 0)
+r=1; [ "${url_count:-0}" -ge 1 ] && r=0
+check "At least 1 URL present (found $url_count)" $r
+
+digit_lines=$(printf "%s\n" "$stories_section" | grep -c '[0-9]' 2>/dev/null || true)
+r=1; [ "${digit_lines:-0}" -ge 2 ] && r=0
+check "Key numbers in Today section (lines with digits: $digit_lines, need ≥2)" $r
+
+echo ""
+
+# ── Word count (body only, excludes link text + URLs) ──
+echo "── Word Count (body only, 1-minute read gate) ────────"
+
 if [ "$IS_FRIDAY" -eq 1 ]; then
-  if [ "$total_words" -ge 900 ] && [ "$total_words" -le 1800 ]; then
-    r=0
-  fi
-  check "Total word count in 900-1800 range for Friday (actual: $total_words)" $r
+  # Daily portion = everything BEFORE Weekly Intelligence
+  daily_portion=$(mktemp); weekly_portion=$(mktemp)
+  awk '/^## Weekly Intelligence/{flag=1} !flag{print}' "$EDITION" > "$daily_portion"
+  awk '/^## Weekly Intelligence/{flag=1} flag{print}'  "$EDITION" > "$weekly_portion"
+
+  daily_words=$(body_words "$daily_portion")
+  weekly_words=$(body_words "$weekly_portion")
+
+  r=1; [ "${daily_words:-0}" -le 260 ] && r=0
+  check "Daily body ≤ 260 words (10w slack on 250; actual: $daily_words)" $r
+
+  r=1; [ "${weekly_words:-0}" -le 520 ] && r=0
+  check "Weekly body ≤ 520 words (20w slack on 500; actual: $weekly_words)" $r
+
+  rm -f "$daily_portion" "$weekly_portion"
 else
-  if [ "$total_words" -ge 500 ] && [ "$total_words" -le 1200 ]; then
-    r=0
-  fi
-  check "Total word count in 500-1200 range (actual: $total_words)" $r
+  body=$(body_words)
+  r=1; [ "${body:-0}" -le 260 ] && r=0
+  check "Daily body ≤ 260 words (10w slack on 250; actual: $body)" $r
 fi
 
 echo ""
 
-# ─────────────────────────────────────────
-# 4. Deep Dive Length
-# ─────────────────────────────────────────
-echo "── Deep Dive Length ───────────────────"
-
-# Extract Deep Dive section: from DEEP DIVE to the next section header (WHAT TO WATCH)
-deep_dive=$(sed -n '/DEEP DIVE/,/WHAT TO WATCH/{/WHAT TO WATCH/d;p;}' "$EDITION" 2>/dev/null || true)
-dd_words=$(echo "$deep_dive" | wc -w | tr -d ' ')
-
-r=1
-if [ "${dd_words:-0}" -ge 100 ] && [ "${dd_words:-0}" -le 400 ]; then
-  r=0
-fi
-check "Deep Dive word count in 100-400 range (actual: $dd_words)" $r
-
-echo ""
-
-# ─────────────────────────────────────────
-# 5. Voice Anti-patterns
-# ─────────────────────────────────────────
+# ── Voice anti-patterns ───────────────────
 echo "── Voice Anti-patterns ────────────────"
 
-# Hedge phrases
 hedge_count=0
 for phrase in "it remains to be seen" "only time will tell" "markets were mixed"; do
-  if grep -qi "$phrase" "$EDITION" 2>/dev/null; then
-    hedge_count=$((hedge_count + 1))
-  fi
+  grep -qi "$phrase" "$EDITION" 2>/dev/null && hedge_count=$((hedge_count + 1))
 done
 r=0; [ "$hedge_count" -gt 0 ] && r=1
 check "No hedge phrases (found $hedge_count)" $r
 
-# Filler phrases
 filler_count=0
 for phrase in "in conclusion" "as we all know" "it goes without saying" "needless to say"; do
-  if grep -qi "$phrase" "$EDITION" 2>/dev/null; then
-    filler_count=$((filler_count + 1))
-  fi
+  grep -qi "$phrase" "$EDITION" 2>/dev/null && filler_count=$((filler_count + 1))
 done
 r=0; [ "$filler_count" -gt 0 ] && r=1
 check "No filler phrases (found $filler_count)" $r
 
-# Morning-Brew-goofy markers: excessive emoji, exclamation marks galore
 exclaim_count=$(grep -c '!' "$EDITION" 2>/dev/null || true)
 emoji_count=$(grep -o '[😀-🙏🌀-🗿🚀-🛿🤀-🧿☀-♿✀-➿]' "$EDITION" 2>/dev/null | wc -l | tr -d ' ')
 : "${emoji_count:=0}"
-r=0
-if [ "${exclaim_count:-0}" -gt 5 ] || [ "${emoji_count:-0}" -gt 3 ]; then
-  r=1
-fi
-check "No Morning-Brew tone (exclaims: $exclaim_count ≤5, emoji: $emoji_count ≤3)" $r
+r=0; { [ "${exclaim_count:-0}" -gt 3 ] || [ "${emoji_count:-0}" -gt 1 ]; } && r=1
+check "No Morning-Brew tone (exclaims: $exclaim_count ≤3, emoji: $emoji_count ≤1)" $r
 
 echo ""
 
-# ─────────────────────────────────────────
-# 6. Anti-features
-# ─────────────────────────────────────────
+# ── Anti-features ─────────────────────────
 echo "── Anti-features ──────────────────────"
 
-# No ticker symbols with $ prefix (like $AAPL, $MSFT)
 ticker_count=$(grep -o '\$[A-Z][A-Z][A-Z]*' "$EDITION" 2>/dev/null | wc -l | tr -d ' ')
 : "${ticker_count:=0}"
 r=0; [ "${ticker_count:-0}" -gt 0 ] && r=1
 check "No \$TICKER symbols (found $ticker_count)" $r
 
-# No buy/sell recommendation language
 rec_count=0
 for phrase in "buy recommendation" "sell recommendation" "we recommend buying" "we recommend selling" "strong buy" "strong sell" "price target"; do
-  if grep -qi "$phrase" "$EDITION" 2>/dev/null; then
-    rec_count=$((rec_count + 1))
-  fi
+  grep -qi "$phrase" "$EDITION" 2>/dev/null && rec_count=$((rec_count + 1))
 done
 r=0; [ "$rec_count" -gt 0 ] && r=1
 check "No buy/sell recommendation language (found $rec_count)" $r
 
 echo ""
 
-# ─────────────────────────────────────────
-# 7. URL Count
-# ─────────────────────────────────────────
-echo "── URL Count ──────────────────────────"
-
-total_urls=$(grep -c 'https\?://' "$EDITION" 2>/dev/null || echo 0)
-r=1
-if [ "${total_urls:-0}" -ge 1 ]; then
-  r=0
-fi
-check "At least 1 URL present (found $total_urls)" $r
-
-echo ""
-
-# ─────────────────────────────────────────
-# Summary
-# ─────────────────────────────────────────
+# ── Summary ───────────────────────────────
 echo "═══════════════════════════════════════"
 printf " Results: %d/%d passed" "$PASS" "$TOTAL"
-if [ "$FAIL" -gt 0 ]; then
-  printf ", %d failed" "$FAIL"
-fi
+[ "$FAIL" -gt 0 ] && printf ", %d failed" "$FAIL"
 echo ""
 echo "═══════════════════════════════════════"
 
