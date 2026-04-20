@@ -51,7 +51,7 @@ The stories section flexes with the news day. Run as many as the news warrants â
 Use standard Markdown â€” headings, bold, links, horizontal rules. No ASCII art.
 
 ```markdown
-# AI Finance Briefing
+# AI Finance News
 
 **DD Month YYYY**
 
