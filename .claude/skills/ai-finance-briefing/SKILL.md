@@ -43,16 +43,16 @@ Section allocation (use as a budget, not a rule):
 |---------|-------|
 | Hook | ~15 |
 | Today's stories (3–7 items) | ~175 |
-| One Contrarian Thought | ~60 |
+| Claude's Take | ~60 |
 | **Total (body)** | **~250** |
 
 The stories section flexes with the news day. Run as many as the news warrants — typically 3 to 7, occasionally more — and let the 250-word body cap police the length. Fewer stories means more context per story; more stories means tighter headlines. Never manufacture items to hit a number, never cut a genuinely important one to save space.
 
+The "Claude's Take" section is a byline, not a mood. Keep the voice consistent day to day: one clear stance on what the day's news means, delivered with the same conviction whether you're confident or hedged. Uncertainty is fine — name it — but never go from strong call one day to throat-clearing the next. The byline promises a consistent analyst, not a rotating one.
+
 Use standard Markdown — headings, bold, links, horizontal rules. No ASCII art.
 
 ```markdown
-# AI Finance News
-
 **DD Month YYYY**
 
 ---
@@ -73,18 +73,18 @@ Use standard Markdown — headings, bold, links, horizontal rules. No ASCII art.
 
 ---
 
-## One Contrarian Thought
+## Claude's Take
 
-[~60 words. A clear stance — what the consensus is getting wrong, or what's mispriced. If you're uncertain, say why; that's still a position.]
+[~60 words. Claude's read on the day — what the consensus is getting wrong, what's mispriced, or the signal under the noise. One clear stance. Uncertainty is fine if named; mush is not.]
 ```
 
 ### Flexible story count
 
-The story count is deliberately flexible. Typical days land 3–7 items. Quiet days may run fewer with more words per story (or a fuller contrarian); heavy days may run 7+ with tighter headlines. The 250-word body cap is the real constraint. Never manufacture stories to hit a number, never cut a genuinely important one to save space. The section header stays "Today" regardless of count.
+The story count is deliberately flexible. Typical days land 3–7 items. Quiet days may run fewer with more words per story (or a fuller Claude's Take); heavy days may run 7+ with tighter headlines. The 250-word body cap is the real constraint. Never manufacture stories to hit a number, never cut a genuinely important one to save space. The section header stays "Today" regardless of count.
 
 ### Friday Weekly Intelligence (extended edition)
 
-Check today's date. If it is Friday, append this section after the Contrarian Thought. **500-word budget, body only.**
+Check today's date. If it is Friday, append this section after Claude's Take. **500-word budget, body only.**
 
 Structure:
 
@@ -182,23 +182,23 @@ Stories that hit all three earn a slot in Today. Stories that hit one get cut �
 
 ## 5. Phase 3 — Pattern Recognition (internal, not written)
 
-Read prior editions from the `editions/` directory so your curation and contrarian take are informed by what's already been said. This is *context*, not a section — the daily briefing has no standalone "Trajectory" output.
+Read prior editions from the `editions/` directory so your curation and Claude's Take are informed by what's already been said. This is *context*, not a section — the daily briefing has no standalone "Trajectory" output.
 
 ### How to read prior editions efficiently
 
 - Read the **hook and Today headlines** from the last 7–14 editions. Skip the rest.
 - Track: recurring company names, repeating themes, accelerating trends, stories that faded, predictions that were right or wrong.
-- Use this to sharpen the Contrarian Thought — a pattern the consensus is missing is usually where the stance comes from.
+- Use this to sharpen Claude's Take — a pattern the consensus is missing is usually where the stance comes from.
 
 ### Bootstrap handling
 
-If fewer than 7 daily editions exist, still read what's available but expect thinner pattern signal. The Contrarian Thought carries the load.
+If fewer than 7 daily editions exist, still read what's available but expect thinner pattern signal. Claude's Take carries the load.
 
 ### Friday Weekly Intelligence
 
 Check today's date. If it is Friday:
 
-1. Read **all daily editions from the past 7 days** — full Today and Contrarian sections.
+1. Read **all daily editions from the past 7 days** — full Today and Claude's Take sections.
 2. Write the Weekly Intelligence section (500-word budget) per the structure in Section 2.
 3. Save the complete briefing (daily + weekly section) to both:
    - `editions/YYYY-MM-DD.md` (normal daily slot)
@@ -220,7 +220,7 @@ Write the briefing in the exact format from Section 2. Work through the sections
 
 1. **Hook** (~15w) — One sentence. The single most important thing. Include a number.
 2. **Today** (~175w total, 3–7 stories, flex with the news day) — each item: bold headline, one-sentence context with the key number, link inline: `[Source →](url)` at the end of the sentence (link text does not count toward the budget).
-3. **One Contrarian Thought** (~60w) — Take a stance. Name what the consensus is getting wrong and why.
+3. **Claude's Take** (~60w) — Take a stance. Name what the consensus is getting wrong and why. Keep the voice consistent day to day.
 4. **Weekly Intelligence** — Only on Fridays. 500-word budget split into Theme 1 / 2 / 3 / What Changed / Next Week to Watch (~100w each).
 
 After drafting, count the words in the body (everything except the title, date line, link text inside `[...]`, URLs, and section dividers). If over 250 (daily) or 500 (weekly body), cut before saving. The 1-minute read is non-negotiable.
@@ -256,7 +256,7 @@ Before saving, read through the complete briefing and verify. Then run `scripts/
 - [ ] Every story has exactly one key number
 - [ ] No padding or filler — every sentence earns its place
 - [ ] The hook is specific and punchy, not generic
-- [ ] The contrarian thought takes a clear stance
+- [ ] Claude's Take takes a clear stance, with voice consistent to prior editions
 - [ ] Voice is ~4/10 on the terminal-to-warm scale: crisp, clipped, occasional dry aside, never cute
 - [ ] No trading signals, no price tables, no buy/sell recommendations
 - [ ] No Deep Dive, What to Watch, or Trajectory section (these were removed — don't reintroduce them)
