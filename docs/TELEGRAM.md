@@ -52,7 +52,7 @@ You should see `sent chunk 1/N` lines and a new message in the channel within a 
 
 ## How it runs daily
 
-The `ai-finance-briefing` skill calls the script at the end of Phase 4, right after saving the edition file. On Fridays it sends the weekly archive as a second message. No other wiring needed.
+The `ai-finance-briefing` skill calls the script at the end of Phase 4, right after saving the edition file. One message per day, every day of the week — on Fridays the daily file already contains the Weekly Intelligence section, and the `editions/weekly/YYYY-Wnn.md` archive file is **not** sent.
 
 ## Troubleshooting
 

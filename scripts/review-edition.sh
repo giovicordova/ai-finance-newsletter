@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # review-edition.sh — structural quality review of a generated edition file.
-# Enforces the 1-minute read contract: 250-word daily cap, 500-word weekly cap
-# (body only — link text and URLs are excluded from the count).
+# Enforces the 1-minute read contract: 250-word daily cap, 200-word Friday
+# weekly cap (body only — link text, URLs, and the Glossary section are
+# excluded from the count).
 
 if [ "${1:-}" = "--help" ] || [ "${1:-}" = "-h" ] || [ $# -eq 0 ]; then
   echo "Usage: review-edition.sh <path-to-edition.md>"
@@ -33,16 +34,23 @@ check() {
 has()       { grep -qi "$1" "$EDITION" >/dev/null 2>&1; }
 
 # Body-word-counter: strip markdown links entirely (both label and URL), drop
-# the title line, date line, section dividers, and code fences. Count what's left.
+# the title line, date line, section dividers, code fences, and the Glossary
+# section (everything from "## Glossary" up to the next "## " heading or EOF).
+# Count what's left.
 body_words() {
   local scope_file="${1:-$EDITION}"
+  awk '
+    /^## Glossary/       { in_glossary = 1; next }
+    in_glossary && /^## / { in_glossary = 0 }
+    !in_glossary          { print }
+  ' "$scope_file" | \
   sed -E \
     -e 's/\[[^]]*\]\([^)]*\)//g'   `# remove [label](url) entirely` \
     -e '/^#[[:space:]]/d'           `# drop H1 title` \
     -e '/^\*\*[0-9]+ [A-Za-z]+ [0-9]{4}\*\*$/d' `# drop date line` \
     -e '/^[[:space:]]*-{3,}[[:space:]]*$/d' \
     -e '/^```/d' \
-    "$scope_file" | wc -w | tr -d ' '
+    | wc -w | tr -d ' '
 }
 
 IS_FRIDAY=0
@@ -62,7 +70,7 @@ echo "── Section Presence ────────────────�
 r=1; has "^## Today" && r=0
 check "Section: Today (stories section) present" $r
 
-has "Contrarian";         check "Section: One Contrarian Thought present" $?
+has "Claude.s Take";      check "Section: Claude's Take present" $?
 
 if [ "$IS_FRIDAY" -eq 1 ]; then
   has "Weekly Intelligence"; check "Section: Weekly Intelligence (Friday)" $?
@@ -107,8 +115,8 @@ if [ "$IS_FRIDAY" -eq 1 ]; then
   r=1; [ "${daily_words:-0}" -le 260 ] && r=0
   check "Daily body ≤ 260 words (10w slack on 250; actual: $daily_words)" $r
 
-  r=1; [ "${weekly_words:-0}" -le 520 ] && r=0
-  check "Weekly body ≤ 520 words (20w slack on 500; actual: $weekly_words)" $r
+  r=1; [ "${weekly_words:-0}" -le 210 ] && r=0
+  check "Weekly body ≤ 210 words (10w slack on 200; actual: $weekly_words)" $r
 
   rm -f "$daily_portion" "$weekly_portion"
 else
