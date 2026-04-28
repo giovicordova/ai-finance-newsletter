@@ -144,22 +144,39 @@ Search the web for AI-in-finance news from the last 24 hours. Run **6–10 searc
 
 Vary the exact queries each day. Include a date qualifier (e.g., "today", "this week", current month) in at least 2 queries to prioritise recency.
 
-### Source tier system
+### Source rules — free, trustable, primary-first
 
-Prioritise in this order:
+The reader must be able to click the link and read the story without hitting a paywall. That constraint shapes everything below.
 
-**Tier 1 — Institutional:** SEC filings (EDGAR), company press releases, official earnings transcripts, central bank publications.
-**Tier 2 — Specialist:** Markets Media, regulatory body announcements (FCA, CFTC, MAS), established research, CoinDesk/The Block (only when relevant).
-**Tier 3 — Quality independent:** Established newsletters with editorial standards, arxiv.org, quality tech reporting (The Information, Semafor).
+**Rule 1 — Primary source wins.** If a press release, SEC filing, earnings transcript, central-bank publication, regulator announcement, lab blog post, or arxiv paper exists for the story, the news post **must** link to that, not to secondary reporting. Primary sources are almost always free and always more authoritative.
 
-**Never use:** SEO content farms, rumour blogs, anonymous social media posts, sites without editorial accountability.
+**Rule 2 — News-post link must be on the allowlist.** The single URL attached to the news post must come from one of these domains (or a clear subdomain):
+
+- **Primary / institutional** (always preferred): `sec.gov`, `federalreserve.gov`, `fred.stlouisfed.org`, `ecb.europa.eu`, `bankofengland.co.uk`, `boj.or.jp`, `fca.org.uk`, `cftc.gov`, `mas.gov.sg`, `esma.europa.eu`, `treasury.gov`, `whitehouse.gov`, `europa.eu`, `bis.org`, `imf.org`, `oecd.org`
+- **Press-release wires**: `businesswire.com`, `prnewswire.com`, `globenewswire.com`
+- **Company IR / official blogs**: any company's own `investor.*` / `ir.*` / `*.com/news` / official engineering or research blog (e.g. `anthropic.com`, `openai.com`, `deepmind.google`, `huggingface.co`, `ai.meta.com`, `blogs.nvidia.com`)
+- **Research**: `arxiv.org`, `nber.org`, `papers.ssrn.com`
+- **Free wires & quality news**: `reuters.com`, `apnews.com`, `bbc.com`, `cnbc.com`, `semafor.com`, `axios.com`, `yahoo.com/finance`, `marketwatch.com`, `theverge.com`, `techcrunch.com`, `arstechnica.com`, `venturebeat.com`
+
+**Rule 3 — Paywall fallback.** If the only source you can find for a story is paywalled (WSJ, FT, Bloomberg, The Information, Economist, Barron's, Business Insider, NYT, Fortune, MIT Tech Review, etc.), do **not** link it. Try in this order:
+1. Find the primary source the paywalled outlet is reporting on (the filing, the press release, the transcript, the lab blog) and link that instead.
+2. Find an allowlisted free outlet covering the same story and link that.
+3. If neither exists, drop the story and pick a different beat from the runners-up.
+
+**Rule 4 — Take-post link.** Same allowlist applies. The take post may cite a different fact than the news post, but its link must still be free and on-allowlist.
+
+**Rule 5 — Never use:** SEO content farms, rumour blogs, anonymous social media posts, AI-aggregator newsletters, sites without bylines or editorial accountability, paywalled outlets.
+
+**Rule 6 — Domain not on the list?** If you find a story on a free, reputable, big-name outlet that isn't on the allowlist (e.g. a major regulator's site you haven't seen before, a top-tier specialist publication), you may use it — but only if it's clearly free, has named editorial accountability, and is at least as trustable as the Tier-2 examples above. When in doubt, drop the story.
 
 ### URL rules (critical — verifiability is non-negotiable)
 
 - Only use URLs you actually opened via web search this session.
 - Never construct a URL from memory or pattern-match a domain.
 - The news post's source URL must contain **every** factual claim in the news post. If the only available source covers half the claims, drop the unsupported half from the post.
-- Prefer direct primary sources (the SEC filing, the press release) over secondary reporting when both exist.
+- The link must be free to read (no paywall, no metering wall, no required signup).
+- The link's domain must be allowlisted under Rule 2 above (or qualify under Rule 6).
+- Prefer primary sources over secondary reporting whenever both exist (Rule 1).
 
 ---
 
@@ -249,6 +266,8 @@ Before considering the run done, verify each item. The first three are deal-brea
 - [ ] News post contains zero directional language (no *cracks*, *bid*, *trade*, *cycle*, *bullish*, *bearish*)
 - [ ] Take post is clearly labelled with the right prefix for the day
 - [ ] News post URL and take post URL are real, opened-this-session URLs
+- [ ] Both URLs are free to read (no paywall, no metering wall, no required signup) and on the §4 allowlist
+- [ ] If a primary source exists for the story (filing, press release, transcript, lab blog), that's what's linked — not secondary reporting
 - [ ] Friday: take post links to the GitHub edition file URL; weekly archive file also written
 - [ ] Edition file uses the exact section headings from Section 3 (the script depends on them)
 - [ ] Notes section is populated — runner-up stories, sources reviewed, pattern context
