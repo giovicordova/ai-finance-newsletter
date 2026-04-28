@@ -1,6 +1,6 @@
 # Telegram Distribution
 
-The daily briefing is posted to a Telegram channel by `scripts/send-to-telegram.py`. You, S, and R subscribe to the channel to read it.
+The daily briefing is posted to a Telegram channel by `scripts/send-to-telegram.py`. Subscribers receive the briefing there.
 
 ## One-time setup
 
@@ -15,7 +15,7 @@ The daily briefing is posted to a Telegram channel by `scripts/send-to-telegram.
 1. In Telegram: **New Channel** → name it → make it **Private** (or public if you prefer a shareable link)
 2. Open the channel → **Manage channel** → **Administrators** → **Add Administrator**
 3. Search for your bot's username, add it, give it **Post Messages** permission
-4. Invite S and R via the channel's invite link (Manage → Invite Links)
+4. Generate an invite link to share with subscribers (Manage → Invite Links)
 
 ### 3. Get the chat ID
 

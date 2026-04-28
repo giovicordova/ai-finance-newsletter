@@ -26,3 +26,6 @@ vendor/
 coverage/
 .cache/
 tmp/
+
+# Skill QA workspace — local-only iteration outputs and snapshots
+.claude/skills/ai-finance-briefing-workspace/

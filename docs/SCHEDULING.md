@@ -17,7 +17,7 @@ The briefing runs as a Claude Code Desktop scheduled task. Each execution fires 
 
 Open any Claude Code Desktop session with this project as the working folder and say:
 
-> Set up a scheduled task that runs the ai-finance-briefing skill every weekday at 6:30 AM EST.
+> Set up a scheduled task that runs the ai-finance-briefing skill every weekday at 07:30 Europe/Rome.
 
 Claude will create the task for you.
 
@@ -28,9 +28,9 @@ Claude will create the task for you.
 3. Fill in:
    - **Name:** AI Finance Daily Briefing
    - **Prompt:** `Use the ai-finance-briefing skill to generate today's briefing.`
-   - **Working folder:** `/Users/giovannicordova/Documents/02_projects/ai-finance-newsletter`
-   - **Frequency:** Weekdays
-   - **Time:** 6:30 AM (set your system timezone to EST, or adjust for your timezone)
+   - **Working folder:** path to your local clone of this repo (e.g. `~/code/ai-finance-newsletter`)
+   - **Frequency:** Weekdays (Mon–Fri only — the skill's Phase 0 gate also enforces this defensively)
+   - **Time:** 07:30 (Europe/Rome — adjust for your timezone)
    - **Model:** Sonnet 4.6 (recommended — good balance of quality and speed)
    - **Permission mode:** Auto-approve file writes (the task only writes to `editions/`)
 4. Click **Save**
@@ -78,4 +78,4 @@ After any run, check the output:
 scripts/review-edition.sh editions/YYYY-MM-DD.md
 ```
 
-This runs 16-17 structural quality checks (section presence, format, word count, voice anti-patterns, anti-features).
+This runs the 280-character cap and section-structure checks against the edition file.
