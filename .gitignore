@@ -29,3 +29,14 @@ tmp/
 
 # Skill QA workspace — local-only iteration outputs and snapshots
 .claude/skills/ai-finance-briefing-workspace/
+
+# Local tooling state
+.bg-shell/
+
+# Defensive: never commit credentials or keys
+*.pem
+*.key
+*.p12
+*.pfx
+credentials.*
+secrets.*
