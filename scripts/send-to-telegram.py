@@ -23,9 +23,9 @@ Edition file contract (the skill writes this format):
 
   <primary source URL>
 
-  ## Telegram — Take Post
+  ## Telegram — Take Post  (optional, Friday only)
 
-  Claude's take: <opinion text>
+  Claude's weekly take: <opinion text>
 
   <link URL>
 

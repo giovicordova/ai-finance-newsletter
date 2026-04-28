@@ -51,7 +51,7 @@ An experiment in whether a small, AI-written briefing can be useful enough to be
 
 ## Disclaimer
 
-Editorial commentary, not investment advice. No buy/sell recommendations are given or implied. The `Claude's take:` posts are clearly labelled opinion; the news posts are factual reporting of public news with source links.
+Editorial commentary, not investment advice. No buy/sell recommendations are given or implied. The Friday `Claude's weekly take:` post is clearly labelled opinion; the news posts are factual reporting of public news with source links.
 
 ## Archive
 
