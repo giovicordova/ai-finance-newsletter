@@ -1,6 +1,6 @@
 # AI Finance Briefing
 
-A daily two-post Telegram briefing on AI's impact on financial markets — written by Claude, sent every weekday at 07:30 Europe/Rome.
+A daily Telegram briefing on AI's impact on financial markets — written by Claude, sent every weekday at 07:30 Europe/Rome. One factual news post Mon–Fri; on Friday a second post adds a labelled `Claude's weekly take:` recap of the week.
 
 📬 **[Subscribe on Telegram →](https://t.me/+ou-g4uEkDHE2NDg0)**
 
@@ -8,12 +8,12 @@ A daily two-post Telegram briefing on AI's impact on financial markets — writt
 
 ## What this is
 
-Two posts per weekday, no padding:
+No padding:
 
-1. **A news post** — the single most important AI-finance beat of the cycle, reported strictly factually with the source link.
-2. **`Claude's take:`** — one labelled opinion. Mon–Thu it's a take on the day's news. Friday it's a recap of the week's threads.
+1. **News post (Mon–Fri)** — the single most important AI-finance beat of the cycle, reported strictly factually with the source link.
+2. **`Claude's weekly take:` (Friday only)** — one labelled opinion synthesising 2–3 threads from the week, with a link to that day's edition file for the receipts.
 
-Hard rules: every fact in the news post is verifiable by clicking its source. Each post is capped at 280 characters (so it'll port cleanly to X if and when this grows). Weekends off.
+No daily Claude take Monday–Thursday — opinion ships once a week, on Fridays. Hard rules: every fact in the news post is verifiable by clicking its source. Each post is capped at 280 characters (so it'll port cleanly to X if and when this grows). Weekends off.
 
 ## What it looks like
 
@@ -25,23 +25,17 @@ A real week of output (21–24 April 2026):
 >
 > https://www.cnbc.com/2026/04/19/cursor-ai-2-billion-funding-round.html
 
-> Claude's take: 25x ARR, roughly twice what OpenAI or Anthropic carry. A wrapper at peak access to someone else's model is a fabulous business right up until the model lab ships the same product. Application-layer print, but the moat is rented.
-
 ### Wednesday
 
 > Anthropic ARR hit $30B in April, up from $19B in March, passing OpenAI's $25B. Enterprise is 80% of revenue with 500+ customers at $1M+. Anthropic guides positive free cash flow in 2027; OpenAI projects a $14B loss in 2026.
 >
 > https://www.saastr.com/anthropic-just-passed-openai-in-revenue-while-spending-4x-less-to-train-their-models/
 
-> Claude's take: the real tell is OpenAI's CRO publicly disputing the comparison — gross vs net, an $8B gap. When leadership argues over how to count, the growth rate stops selling itself. $14B 2026 loss vs 2027 FCF guide. They're not racing, they're diverging.
-
 ### Thursday
 
 > Six big US banks — JPMorgan, BofA, Citi, Goldman, Morgan Stanley and Wells — cut about 15,000 jobs in Q1 while booking record profits. BofA's Moynihan credited AI for 1,000 of its cuts; Citi has pledged 20,000 reductions tied to its AI rollout.
 >
 > https://www.artificialintelligence-news.com/news/wall-street-ai-gains-are-here-banks-plan-for-fewer-people/
-
-> Claude's take: the productivity dividend from AI is being banked as profit, not redeployed as growth. Records and layoffs in the same quarter is what late cycle looks like, not early. The interesting thing: nobody's reinvesting the savings.
 
 ### Friday *(weekly recap)*
 
@@ -68,7 +62,7 @@ Past editions live in [`editions/`](editions/), one Markdown file per weekday. F
 The whole thing is a Claude Code skill at [`.claude/skills/ai-finance-briefing/`](.claude/skills/ai-finance-briefing/SKILL.md) that handles research, curation, writing, and the day-of-week gate. Two scripts in [`scripts/`](scripts/) handle the rest:
 
 - `scripts/review-edition.sh` — enforces the 280-char caps and section structure
-- `scripts/send-to-telegram.py` — posts the two messages back-to-back to the channel
+- `scripts/send-to-telegram.py` — posts the news message (and on Friday, the weekly take as a second message) to the channel
 
 If you want to fork and run your own:
 

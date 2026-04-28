@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 """
-Send a daily AI-finance edition to a Telegram channel as two separate messages:
-the news post and the take post. The "## Notes" section is archive-only and is
-never sent.
+Send a daily AI-finance edition to a Telegram channel.
+
+Always sends the news post. Sends the take post too if the edition file contains
+a "## Telegram — Take Post" section (Friday only, by convention). The
+"## Notes" section is archive-only and is never sent.
 
 Usage:
   scripts/send-to-telegram.py editions/YYYY-MM-DD.md
@@ -63,10 +65,12 @@ TELEGRAM_LIMIT = 4000
 
 
 # Section headings the skill writes, in order. The script sends one message
-# per section. Anything outside these sections is ignored.
+# per section. The News Post is required; the Take Post is optional (Friday-only
+# by editorial convention, absent Mon-Thu). Anything outside these sections is
+# ignored.
 TELEGRAM_SECTIONS = [
-    ("News Post", "## Telegram — News Post"),
-    ("Take Post", "## Telegram — Take Post"),
+    ("News Post", "## Telegram — News Post", True),
+    ("Take Post", "## Telegram — Take Post", False),
 ]
 
 
@@ -157,14 +161,17 @@ def main():
         md = f.read()
 
     sections = []
-    for label, heading in TELEGRAM_SECTIONS:
+    for label, heading, required in TELEGRAM_SECTIONS:
         body = extract_section(md, heading)
         if body is None:
-            print(
-                f"error: missing required section '{heading}' in {path}",
-                file=sys.stderr,
-            )
-            sys.exit(3)
+            if required:
+                print(
+                    f"error: missing required section '{heading}' in {path}",
+                    file=sys.stderr,
+                )
+                sys.exit(3)
+            print(f"skipped {label} (no '{heading}' section in {path})")
+            continue
         if len(body) > TELEGRAM_LIMIT:
             print(
                 f"error: {label} section exceeds {TELEGRAM_LIMIT} chars after parsing",
