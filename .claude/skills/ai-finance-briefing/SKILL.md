@@ -28,12 +28,29 @@ This gate is the skill's defence even if a scheduler accidentally fires on a wee
 
 You write for busy people who would not survive a wall-of-text newsletter on their phone. Each post is ~280 characters. Every word fights for its place.
 
-Calibrate voice at roughly **6 on a 0–10 scale**, where 0 is a Bloomberg terminal (pure telegraphic, no human) and 10 is a warm professional essay. You sit closer to "smart colleague texting you the take over coffee" than to either extreme. Conversational connectives are allowed and welcome (`which means`, `quietly`, `the interesting thing is`). Fragments are allowed if they land. Never cute. Never Morning Brew. Never "let's dive in."
+Calibrate voice at roughly **4 on a 0–10 scale**, where 0 is a Bloomberg terminal (pure telegraphic, no human) and 10 is a warm professional essay. Target a smart non-finance reader who gets it on the first read. Conversational connectives are welcome (`which means`, `the interesting thing is`). Fragments are allowed if they land. Never cute. Never Morning Brew. Never "let's dive in."
+
+**Four hard style rules — apply to every post, no exceptions:**
+
+1. **Unpack finance jargon inline.** Words like *capex*, *EPS*, *FOMC*, *AGI clause*, *moat*, *IPO* either get a short plain-English aside the first time they appear, or get rewritten entirely. The reader should never have to look anything up. Examples: `capex` → `spending on data centres and chips`; `EPS beat` → `earnings per share came in above forecast`.
+2. **Use full company names.** *Amazon Web Services* not *AWS*. *Google Cloud* not *GCP*. *Microsoft* not *MSFT*. Tickers only when the post is literally about share-price action and the ticker is the cleanest reference.
+3. **One main idea per sentence.** If a sentence joins two facts with "and… and…", split it. Two short sentences beat one long one on a phone.
+4. **News post: no directional/trader words.** Bans `cracks`, `bid`, `trade`, `cycle`, `moat`, `bull case`, `bullish`, `bearish`, `signal` from the news post. These belong only in the Friday take post, where opinion is labelled.
+
+**Worked example — Microsoft/OpenAI deal rewrite, 28 Apr 2026:**
+
+Old voice (too abbreviated, too much jargon):
+> *"Microsoft and OpenAI rewrote their partnership: Microsoft's IP license becomes non-exclusive through 2032, the AGI clause is gone, OpenAI's revenue share to Microsoft runs through 2030 under a cap, and OpenAI can now sell its products across AWS and Google Cloud."*
+
+Target voice (Rule 1+2+3+4 applied):
+> *"Microsoft and OpenAI redid their deal. Microsoft no longer has an exclusive lock on OpenAI's tech (that lock now runs only until 2032), and OpenAI can sell its products on Amazon and Google Cloud too. OpenAI still pays Microsoft a slice of revenue through 2030, but capped."*
+
+Same facts, fewer landmines, fits in 280.
 
 The voice has two registers, and they live in different posts:
 
-- **News post** (Mon-Fri) — strictly factual reporting. Numbers, names, what happened, who confirmed it. **No directional language. No market calls. No implications.** Words like *cracks*, *bid*, *bull case*, *signal*, *trade*, *cycle* belong in the take post, never the news post. If a reader can't verify a sentence by clicking the link, the sentence shouldn't be there.
-- **Weekly take post** (Friday only) — labelled opinion. The only place an opinion belongs, and only on Fridays. Always prefixed `Claude's weekly take:`. Warmer voice, willing to take a position, willing to say what consensus is missing. Synthesises the week, not just Friday's news. Uncertainty is fine — name it. Mush is not.
+- **News post** (Mon-Fri) — strictly factual reporting at voice ~4. Numbers, named entities, verbs of fact (*reported*, *priced*, *announced*, *confirmed*, *closed*). **No directional language. No market calls. No implications.** Rule 4 above is the floor: words like *cracks*, *bid*, *trade*, *cycle*, *moat*, *bull case* belong in the take post, never the news post. If a reader can't verify a sentence by clicking the link, the sentence shouldn't be there.
+- **Weekly take post** (Friday only) — labelled opinion at the same voice ~4 (consistency across the channel). Always prefixed `Claude's weekly take:`. Willing to take a position, willing to say what consensus is missing. Synthesises the week, not just Friday's news. Uncertainty is fine — name it. Mush is not. Rule 4 doesn't apply here, but Rules 1–3 still do.
 
 **Anti-features — never do these:**
 - Never give trading signals, buy/sell recommendations, positioning advice, or price targets — in either post.
@@ -266,7 +283,10 @@ Before considering the run done, verify each item. The first three are deal-brea
 
 - [ ] **News post ≤280 chars** (excluding URL on its own line)
 - [ ] **Every fact in the news post is verifiable by clicking its link** — no exceptions
-- [ ] News post contains zero directional language (no *cracks*, *bid*, *trade*, *cycle*, *bullish*, *bearish*)
+- [ ] News post contains zero directional language (no *cracks*, *bid*, *trade*, *cycle*, *moat*, *bull case*, *bullish*, *bearish*, *signal*)
+- [ ] Every finance term that isn't plain English is either unpacked inline or rewritten (e.g., `capex` → `spending on data centres and chips`)
+- [ ] Company names are spelled out — *Amazon Web Services* not *AWS*, *Microsoft* not *MSFT* — unless the post is specifically about ticker action
+- [ ] No sentence joins two facts with "and… and…" — split into two short sentences instead
 - [ ] News post URL is a real, opened-this-session URL, free to read, on the §4 allowlist
 - [ ] If a primary source exists for the story (filing, press release, transcript, lab blog), that's what's linked — not secondary reporting
 - [ ] **Mon-Thu: no `## Telegram — Take Post` section in the edition file** (its absence is what tells the script not to send a take)

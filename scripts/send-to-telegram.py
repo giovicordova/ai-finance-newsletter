@@ -36,6 +36,7 @@ The script extracts the two "Telegram — ..." sections, sends each as its own
 message (URL on its own line, link previews disabled), and exits.
 """
 
+import hashlib
 import html
 import os
 import re
@@ -180,12 +181,29 @@ def main():
             sys.exit(4)
         sections.append((label, body))
 
+    # Idempotency guard. Refuse to resend the same (edition, section, content)
+    # combo. Survives stale routine prompts and accidental double-runs.
+    log_path = Path(__file__).resolve().parent.parent / ".sent-log"
+    sent_keys = set()
+    if log_path.exists():
+        sent_keys = {line.strip() for line in log_path.read_text().splitlines() if line.strip()}
+
+    edition_name = Path(path).name
+    sent_count = 0
     for i, (label, body) in enumerate(sections, 1):
-        if i > 1:
+        digest = hashlib.sha256(body.encode("utf-8")).hexdigest()[:12]
+        key = f"{edition_name}\t{label}\t{digest}"
+        if key in sent_keys:
+            print(f"skipped {label} (already sent, see .sent-log)")
+            continue
+        if sent_count > 0:
             # Tiny pause to keep ordering sane in the channel and stay under
             # Telegram's per-chat rate limit.
             time.sleep(0.5)
         send(token, chat_id, md_to_html(body))
+        with log_path.open("a", encoding="utf-8") as f:
+            f.write(key + "\n")
+        sent_count += 1
         print(f"sent {label} ({len(body)} chars)")
 
 

@@ -32,6 +32,10 @@ tmp/
 
 # Local tooling state
 .bg-shell/
+.sent-log
+
+# Personal project instructions, not for the public repo
+CLAUDE.md
 
 # Defensive: never commit credentials or keys
 *.pem
