@@ -2,7 +2,12 @@
 
 ## Overview
 
-The briefing runs as a Claude Code Desktop scheduled task. Each execution fires a fresh session that researches, curates, and writes the day's edition — saving it to `editions/YYYY-MM-DD.md`.
+The briefing runs as **two** Claude Code Desktop scheduled tasks:
+
+- **News routine** (Mon-Fri, 06:00 Europe/Rome): research, write, review, commit, and send the news post. On Fridays this also generates the weekly take into the same edition file, but holds it back for the take routine.
+- **Take routine** (Friday only, 07:00 Europe/Rome): reads the already-generated edition and sends just the take post, one hour after the news.
+
+Each execution fires a fresh session. The news routine writes `editions/YYYY-MM-DD.md` (and on Fridays also `editions/weekly/YYYY-Wnn.md`); the take routine reads that file and sends only.
 
 ## Prerequisites
 
@@ -17,23 +22,31 @@ The briefing runs as a Claude Code Desktop scheduled task. Each execution fires 
 
 Open any Claude Code Desktop session with this project as the working folder and say:
 
-> Set up a scheduled task that runs the ai-finance-briefing skill every weekday at 07:30 Europe/Rome.
+> Set up two scheduled tasks: one Mon-Fri at 06:00 Europe/Rome that runs the prompt in `routines/news.md`, and one Friday-only at 07:00 Europe/Rome that runs the prompt in `routines/take.md`.
 
-Claude will create the task for you.
+Claude will create both tasks for you.
 
 ### Option 2: Manual via sidebar
 
-1. Click **Schedule** in the Desktop sidebar
-2. Click **+ New task** → **New local task**
-3. Fill in:
-   - **Name:** AI Finance Daily Briefing
-   - **Prompt:** `Use the ai-finance-briefing skill to generate today's briefing.`
-   - **Working folder:** path to your local clone of this repo (e.g. `~/code/ai-finance-newsletter`)
-   - **Frequency:** Weekdays (Mon–Fri only — the skill's Phase 0 gate also enforces this defensively)
-   - **Time:** 07:30 (Europe/Rome — adjust for your timezone)
-   - **Model:** Sonnet 4.6 (recommended — good balance of quality and speed)
-   - **Permission mode:** Auto-approve file writes (the task only writes to `editions/`)
-4. Click **Save**
+Create **two** local tasks via **Schedule → + New task → New local task**:
+
+**Task 1: News routine**
+- **Name:** AI Finance News (daily)
+- **Prompt:** Paste the contents of `routines/news.md`
+- **Working folder:** path to your local clone
+- **Frequency:** Weekdays (Mon-Fri)
+- **Time:** 06:00 Europe/Rome
+- **Model:** Sonnet 4.6
+- **Permission mode:** Auto-approve file writes
+
+**Task 2: Take routine**
+- **Name:** AI Finance Take (Friday)
+- **Prompt:** Paste the contents of `routines/take.md`
+- **Working folder:** path to your local clone
+- **Frequency:** Friday only
+- **Time:** 07:00 Europe/Rome
+- **Model:** Sonnet 4.6
+- **Permission mode:** Auto-approve file writes
 
 ### Option 3: Cloud task (runs without your machine)
 

@@ -7,7 +7,11 @@ a "## Telegram — Take Post" section (Friday only, by convention). The
 "## Notes" section is archive-only and is never sent.
 
 Usage:
-  scripts/send-to-telegram.py editions/YYYY-MM-DD.md
+  scripts/send-to-telegram.py editions/YYYY-MM-DD.md [--section news|take]
+
+  --section news   send only the News Post (skip the take, even if present)
+  --section take   send only the Take Post (skip the news; fails if no take)
+  (omitted)        send both, as before
 
 Reads:
   TELEGRAM_BOT_TOKEN  -- from @BotFather
@@ -142,12 +146,24 @@ def send(token: str, chat_id: str, text: str, disable_preview: bool = True):
     return result.stdout
 
 
-def main():
-    if len(sys.argv) != 2:
-        print("usage: send-to-telegram.py <edition.md>", file=sys.stderr)
-        sys.exit(2)
+SECTION_FILTERS = {"news": "News Post", "take": "Take Post"}
 
-    path = sys.argv[1]
+
+def parse_args(argv: list[str]) -> tuple[str, str | None]:
+    """Return (path, section_filter). section_filter is None | 'News Post' | 'Take Post'."""
+    if len(argv) == 2:
+        return argv[1], None
+    if len(argv) == 4 and argv[2] == "--section" and argv[3] in SECTION_FILTERS:
+        return argv[1], SECTION_FILTERS[argv[3]]
+    print(
+        "usage: send-to-telegram.py <edition.md> [--section news|take]",
+        file=sys.stderr,
+    )
+    sys.exit(2)
+
+
+def main():
+    path, section_filter = parse_args(sys.argv)
     load_dotenv()
     token = os.environ.get("TELEGRAM_BOT_TOKEN")
     chat_id = os.environ.get("TELEGRAM_CHAT_ID")
@@ -163,9 +179,13 @@ def main():
 
     sections = []
     for label, heading, required in TELEGRAM_SECTIONS:
+        if section_filter is not None and label != section_filter:
+            continue
         body = extract_section(md, heading)
         if body is None:
-            if required:
+            # Under a section filter the requested section is effectively required.
+            is_required = required or section_filter == label
+            if is_required:
                 print(
                     f"error: missing required section '{heading}' in {path}",
                     file=sys.stderr,

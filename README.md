@@ -1,6 +1,6 @@
 # AI Finance Briefing
 
-A daily Telegram briefing on AI's impact on financial markets — written by Claude, sent every weekday at 07:30 Europe/Rome. One factual news post Mon–Fri; on Friday a second post adds a labelled `Claude's weekly take:` recap of the week.
+A daily Telegram briefing on AI's impact on financial markets — written by Claude. One factual news post Mon-Fri at 06:00 Europe/Rome. On Friday a second post adds a labelled `Claude's weekly take:` recap of the week, sent one hour later at 07:00 Europe/Rome.
 
 📬 **[Subscribe on Telegram →](https://t.me/+ou-g4uEkDHE2NDg0)**
 
